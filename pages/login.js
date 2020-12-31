@@ -7,6 +7,7 @@ import { Formik, Form } from "formik";
 import InputField from "../components/InputField";
 import { withApollo } from "../utils/withApollo";
 import { LOGIN_MUTATION } from "../graphql/mutations/login";
+import { ME_QUERY } from "../graphql/queries/me";
 import { toErrorMap } from "../utils/toErrorMap";
 
 function Login() {
@@ -15,7 +16,18 @@ function Login() {
   const initialValues = { nameOrEmail: "", password: "" };
 
   const handleSubmit = async (values, setErrors) => {
-    const response = await login({ variables: values });
+    const response = await login({ 
+      variables: values,
+      update: (cache, { data }) => {
+        cache.writeQuery({
+          query: ME_QUERY,
+          data: {
+            __typename: "Query",
+            me: data?.login.team
+          }
+        })
+      }
+    });
     if(response.data?.login.errors) {
       setErrors(toErrorMap(response.data.login.errors));
     } else if (response.data?.login.team) {
