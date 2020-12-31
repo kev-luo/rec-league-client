@@ -29,7 +29,10 @@ function Home() {
       </Head>
       <div>
         {!data?.me ? (
+          <>
           <Link href="/login">Login</Link>
+          <Link href="/register">Register</Link>
+          </>
         ) : (
           <>
             <Link href="/teamHome">{data?.me?.name}</Link>
