@@ -1,8 +1,4 @@
-import {
-  ApolloClient,
-  ApolloProvider,
-  NormalizedCacheObject,
-} from "@apollo/client";
+import { ApolloProvider, NormalizedCacheObject } from "@apollo/client";
 import { NextPage, NextPageContext } from "next";
 import App, { AppContext } from "next/app";
 import Head from "next/head";
@@ -18,11 +14,8 @@ let globalApolloClient = null;
  * inside getStaticProps, getStaticPaths or getServerSideProps
  * @param {NextPageContext | AppContext} ctx
  */
-export const initOnContext = (
-  acp,
-  ctx
-) => {
-  const ac = typeof acp === 'function' ? acp(ctx) : acp; 
+export const initOnContext = (acp, ctx) => {
+  const ac = typeof acp === "function" ? acp(ctx) : acp;
   const inAppContext = Boolean(ctx.ctx);
 
   // We consider installing `withApollo({ ssr: true })` on global App level
@@ -64,13 +57,9 @@ export const initOnContext = (
  * @param  {NormalizedCacheObject} initialState
  * @param  {NextPageContext} ctx
  */
-const initApolloClient = (
-  acp,
-  initialState,
-  ctx
-) => {
-  const apolloClient = typeof acp === 'function' ? acp(ctx) : acp; 
-  
+const initApolloClient = (acp, initialState, ctx) => {
+  const apolloClient = typeof acp === "function" ? acp(ctx) : acp;
+
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (typeof window === "undefined") {
@@ -93,7 +82,7 @@ const initApolloClient = (
  * @param  {Boolean} [withApolloOptions.ssr=false]
  * @returns {(PageComponent: NextPage<P>) => ComponentClass<P> | FunctionComponent<P>}
  */
-export function createWithApollo(ac) {
+export const createWithApollo = (ac) => {
   return ({ ssr = false } = {}) => (PageComponent) => {
     const WithApollo = (pageProps) => {
       let client;
@@ -195,14 +184,10 @@ export function createWithApollo(ac) {
 
     return WithApollo;
   };
-};
+}
 
-const createApolloClient = (
-  acp,
-  initialState,
-  ctx
-  ) => {
-  const apolloClient = typeof acp === 'function' ? acp(ctx) : acp;
+const createApolloClient = (acp, initialState, ctx) => {
+  const apolloClient = typeof acp === "function" ? acp(ctx) : acp;
   // The `ctx` (NextPageContext) will only be present on the server.
   // use it to extract auth headers (ctx.req) or similar.
   apolloClient.ssrMode = Boolean(ctx);
