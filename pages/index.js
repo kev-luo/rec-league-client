@@ -7,7 +7,6 @@ import { withApollo } from '../utils/withApollo';
 function Home() {
   const { data } = useQuery(GET_TEAMS_QUERY);
 
-  if(data) console.log(data)
   return (
     <div className={styles.container}>
       <Head>
