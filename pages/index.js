@@ -3,6 +3,7 @@ import styles from '../styles/Home.module.css'
 import { useQuery } from "@apollo/client";
 import { GET_TEAMS_QUERY } from "../graphql/queries/teams";
 import { withApollo } from '../utils/withApollo';
+import Link from "next/link";
 
 function Home() {
   const { data } = useQuery(GET_TEAMS_QUERY);
@@ -14,7 +15,7 @@ function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
-        {data && <div>{data.teams[0].name}</div>}
+        <Link href="/login">Login</Link>
       </div>
     </div>
   )
