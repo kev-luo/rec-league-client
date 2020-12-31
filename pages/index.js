@@ -2,8 +2,9 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { useQuery } from "@apollo/client";
 import { GET_TEAMS_QUERY } from "../graphql/queries/teams";
+import { withApollo } from '../utils/withApollo';
 
-export default function Home() {
+function Home() {
   const { data } = useQuery(GET_TEAMS_QUERY);
 
   if(data) console.log(data)
@@ -19,3 +20,5 @@ export default function Home() {
     </div>
   )
 }
+
+export default withApollo({ ssr: true })(Home);
