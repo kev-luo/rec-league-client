@@ -1,8 +1,7 @@
-import { ApolloProvider, NormalizedCacheObject } from "@apollo/client";
-import { NextPage, NextPageContext } from "next";
-import App, { AppContext } from "next/app";
-import Head from "next/head";
 import React from "react";
+import App from "next/app";
+import Head from "next/head";
+import { ApolloProvider } from "@apollo/client";
 
 // On the client, we store the Apollo Client in the following variable.
 // This prevents the client from reinitializing between page transitions.
@@ -12,10 +11,9 @@ let globalApolloClient = null;
  * Installs the Apollo Client on NextPageContext
  * or NextAppContext. Useful if you want to use apolloClient
  * inside getStaticProps, getStaticPaths or getServerSideProps
- * @param {NextPageContext | AppContext} ctx
+ * @param {NextPageContext | NextAppContext} ctx
  */
-export const initOnContext = (acp, ctx) => {
-  const ac = typeof acp === "function" ? acp(ctx) : acp;
+export const initOnContext = (ac, ctx) => {
   const inAppContext = Boolean(ctx.ctx);
 
   // We consider installing `withApollo({ ssr: true })` on global App level
@@ -57,18 +55,20 @@ export const initOnContext = (acp, ctx) => {
  * @param  {NormalizedCacheObject} initialState
  * @param  {NextPageContext} ctx
  */
-const initApolloClient = (acp, initialState, ctx) => {
-  const apolloClient = typeof acp === "function" ? acp(ctx) : acp;
-
+const initApolloClient = (apolloClient, initialState, ctx) => {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (typeof window === "undefined") {
-    return createApolloClient(apolloClient, initialState, ctx);
+    return createApolloClient(apolloClient(ctx), initialState, ctx);
   }
 
   // Reuse client on the client-side
   if (!globalApolloClient) {
-    globalApolloClient = createApolloClient(apolloClient, initialState, ctx);
+    globalApolloClient = createApolloClient(
+      apolloClient(ctx),
+      initialState,
+      ctx
+    );
   }
 
   return globalApolloClient;
@@ -78,20 +78,20 @@ const initApolloClient = (acp, initialState, ctx) => {
  * Creates a withApollo HOC
  * that provides the apolloContext
  * to a next.js Page or AppTree.
- * @param  {Object} ac
+ * @param  {Object} withApolloOptions
  * @param  {Boolean} [withApolloOptions.ssr=false]
- * @returns {(PageComponent: NextPage<P>) => ComponentClass<P> | FunctionComponent<P>}
+ * @returns {(PageComponent: ReactNode) => ReactNode}
  */
 export const createWithApollo = (ac) => {
   return ({ ssr = false } = {}) => (PageComponent) => {
-    const WithApollo = (pageProps) => {
+    const WithApollo = ({ apolloClient, apolloState, ...pageProps }) => {
       let client;
-      if (pageProps.apolloClient) {
+      if (apolloClient) {
         // Happens on: getDataFromTree & next.js ssr
-        client = pageProps.apolloClient;
+        client = apolloClient;
       } else {
         // Happens on: next.js csr
-        client = initApolloClient(ac, pageProps.apolloState, undefined);
+        client = initApolloClient(ac, apolloState, undefined);
       }
 
       return (
@@ -126,7 +126,7 @@ export const createWithApollo = (ac) => {
           const { AppTree } = ctx;
           // When redirecting, the response is finished.
           // No point in continuing to render
-          if (ctx.res && ctx.res.writableEnded) {
+          if (ctx.res && ctx.res.finished) {
             return pageProps;
           }
 
@@ -153,10 +153,6 @@ export const createWithApollo = (ac) => {
               // your entire AppTree once for every query. Check out apollo fragments
               // if you want to reduce the number of rerenders.
               // https://www.apollographql.com/docs/react/data/fragments/
-
-              // TypeScript fails this check for some reason.
-              // <AppInitialProps & {[name: string]: any;}> should be alright.
-              // @ts-ignore
               await getDataFromTree(<AppTree {...props} />);
             } catch (error) {
               // Prevent Apollo Client GraphQL errors from crashing SSR.
@@ -184,14 +180,13 @@ export const createWithApollo = (ac) => {
 
     return WithApollo;
   };
-}
+};
 
-const createApolloClient = (acp, initialState, ctx) => {
-  const apolloClient = typeof acp === "function" ? acp(ctx) : acp;
+function createApolloClient(apolloClient, initialState, ctx) {
   // The `ctx` (NextPageContext) will only be present on the server.
   // use it to extract auth headers (ctx.req) or similar.
   apolloClient.ssrMode = Boolean(ctx);
   apolloClient.cache.restore(initialState);
 
   return apolloClient;
-};
+}

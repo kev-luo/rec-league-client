@@ -7,6 +7,7 @@ import { Formik, Form } from "formik";
 import InputField from "../components/InputField";
 import { withApollo } from "../utils/withApollo";
 import { LOGIN_MUTATION } from "../graphql/mutations/login";
+import { toErrorMap } from "../utils/toErrorMap";
 
 function Login() {
   const router = useRouter();
@@ -17,7 +18,7 @@ function Login() {
     const response = await login({ variables: values });
     if(response.data?.login.errors) {
       setErrors(toErrorMap(response.data.login.errors));
-    } else if (response.data?.login.user) {
+    } else if (response.data?.login.team) {
       router.push("/");
     }
   };
