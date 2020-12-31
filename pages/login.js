@@ -1,9 +1,10 @@
 import React from "react";
-import { Input, Box } from "@chakra-ui/react";
+import { Box, Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useMutation } from "@apollo/client";
 import { Formik, Form } from "formik";
 
+import InputField from "../components/InputField";
 import { withApollo } from "../utils/withApollo";
 import { LOGIN_MUTATION } from "../graphql/mutations/login";
 
@@ -22,13 +23,21 @@ function Login() {
   };
 
   return (
-    <Box>
+    <Box w="50%" h="50%">
       <Formik
         initialValues={initialValues}
         onSubmit={async (values, { setErrors }) =>
           await handleSubmit(values, setErrors)
         }
-      ></Formik>
+      >
+        {(props) => (
+          <Form>
+            <InputField name="nameOrEmail" label="Team Name/ Email" />
+            <InputField name="password" label="Password" type="password" />
+            <Button type="submit" isLoading={props.isSubmitting}>Login</Button>
+          </Form>
+        )}
+      </Formik>
     </Box>
   );
 }
