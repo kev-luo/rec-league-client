@@ -8,6 +8,7 @@ import { withApollo } from "../../utils/withApollo";
 import Layout from "../../components/Layout";
 import { ME_QUERY } from "../../graphql/queries/me";
 import { isServer } from "../../utils/isServer";
+import Roster from "../../components/Roster";
 
 function TeamHome() {
   const { data, loading } = useQuery(ME_QUERY, { skip: isServer() });
@@ -20,6 +21,7 @@ function TeamHome() {
           <ChakraLink>Add Player</ChakraLink>
         </Link>
       )}
+      <Roster />
     </Layout>
   );
 }

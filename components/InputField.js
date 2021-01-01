@@ -6,10 +6,18 @@ import {
   FormControl,
   Textarea,
   Checkbox,
+  NumberInput,
+  NumberInputField,
 } from "@chakra-ui/react";
 import { useField } from "formik";
 
-export default function InputField({ label, textarea, isCheckBox, ...props }) {
+export default function InputField({
+  label,
+  textarea,
+  numInput,
+  isCheckBox,
+  ...props
+}) {
   let InputOrTextarea;
   if (textarea) {
     InputOrTextarea = Textarea;
@@ -18,12 +26,20 @@ export default function InputField({ label, textarea, isCheckBox, ...props }) {
   }
 
   const [field, { error }] = useField(props);
-  console.log(field);
 
   return (
     <FormControl isInvalid={!!error}>
       {isCheckBox ? (
-        <Checkbox>{label}</Checkbox>
+        <Checkbox {...field} {...props}>
+          {label}
+        </Checkbox>
+      ) : numInput ? (
+        <>
+          <FormLabel htmlFor={field.name}>{label}</FormLabel>
+          <NumberInput {...field} {...props} min={18} max={70}>
+            <NumberInputField {...field} {...props}/>
+          </NumberInput>
+        </>
       ) : (
         <>
           <FormLabel htmlFor={field.name}>{label}</FormLabel>

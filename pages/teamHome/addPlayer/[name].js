@@ -1,19 +1,17 @@
-import React from "react";
-import { Box, Button, Radio } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { useMutation } from "@apollo/client";
-import { Formik, Form } from "formik";
-import { CheckboxSingleControl } from "formik-chakra-ui"
-
-import Layout from "../../../components/Layout";
+import { Box, Button } from "@chakra-ui/react";
+import { Form, Formik } from "formik";
+import { useRouter } from "next/router";
+import React from "react";
 import InputField from "../../../components/InputField";
-import { withApollo } from "../../../utils/withApollo";
+import Layout from "../../../components/Layout";
 import { CREATE_PLAYER_MUTATION } from "../../../graphql/mutations/createPlayer";
 import { toErrorMap } from "../../../utils/toErrorMap";
+import { withApollo } from "../../../utils/withApollo";
+
 
 function AddPlayer() {
   const router = useRouter();
-  console.log(router)
   const [createPlayer] = useMutation(CREATE_PLAYER_MUTATION);
   const initialValues = {
     firstName: "",
@@ -22,20 +20,19 @@ function AddPlayer() {
     captain: false
   };
 
-  // const handleSubmit = async (values, setErrors) => {
-  //   const response = await createPlayer({
-  //     variables: values,
-  //   });
-  //   if (response.data?.createPlayer.errors) {
-  //     setErrors(toErrorMap(response.data.createPlayer.errors));
-  //   } else if (response.data?.createPlayer.player) {
-
-  //   }
-  // };
-
   const handleSubmit = async (values, setErrors) => {
-    console.log(values);
-  }
+    const response = await createPlayer({
+      variables: {
+        ...values,
+        age: parseInt(values.age)
+      },
+    });
+    if (response.data?.createPlayer.errors) {
+      setErrors(toErrorMap(response.data.createPlayer.errors));
+    } else if (response.data?.createPlayer.player) {
+
+    }
+  };
 
   return (
     <Layout>
@@ -50,10 +47,8 @@ function AddPlayer() {
             <Form>
               <InputField name="firstName" label="First Name" />
               <InputField name="lastName" label="Last Name" />
-              <InputField name="age" label="Age" />
-              <CheckboxSingleControl name="captain">
-                Captain
-              </CheckboxSingleControl>
+              <InputField name="age" label="Age" numInput/>
+              <InputField name="captain" label="Captain" isCheckBox/>
               <Button type="submit" isLoading={props.isSubmitting}>
                 Register
               </Button>
