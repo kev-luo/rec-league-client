@@ -4,6 +4,7 @@ import { useQuery, useMutation, useApolloClient } from "@apollo/client";
 import Link from "next/link";
 import { Button } from "@chakra-ui/react";
 
+import Layout from "../components/Layout";
 import { withApollo } from "../utils/withApollo";
 import { isServer } from "../utils/isServer";
 import { ME_QUERY } from "../graphql/queries/me";
@@ -22,7 +23,7 @@ function Home() {
   }
 
   return (
-    <div className={styles.container}>
+    <Layout>
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
@@ -40,7 +41,7 @@ function Home() {
           </>
         )}
       </div>
-    </div>
+    </Layout>
   );
 }
 
