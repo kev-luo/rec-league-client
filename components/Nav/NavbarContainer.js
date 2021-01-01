@@ -6,6 +6,8 @@ export default function NavbarContainer({children}) {
     <Flex 
       as="nav"
       w="100%"
+      align="center"
+      justify="space-between"
     >
       {children}
     </Flex>
