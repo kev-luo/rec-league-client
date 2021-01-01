@@ -4,6 +4,7 @@ import { Box, Stack, Button } from "@chakra-ui/react";
 import NavItem from "./NavItem";
 
 export default function NavItems({ data, handleLogout, logoutLoading }) {
+  if(data) console.log(data)
   return (
     <Box>
       <Stack
@@ -13,7 +14,7 @@ export default function NavItems({ data, handleLogout, logoutLoading }) {
       >
         {data?.me ? (
           <>
-            <NavItem href="/teamHome">Team Profile</NavItem>
+            <NavItem href="/teamHome/[name]" name={data.me.name}>Team Profile</NavItem>
             <Button onClick={handleLogout} isLoading={logoutLoading}>
               Logout
             </Button>
