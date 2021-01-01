@@ -12,7 +12,7 @@ function Home() {
   return (
     <Layout>
       <Head>
-        <title>Create Next App</title>
+        <title>Home</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
     </Layout>

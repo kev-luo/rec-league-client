@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useMutation } from "@apollo/client";
 import { Formik, Form } from "formik";
 
+import Layout from "../components/Layout";
 import InputField from "../components/InputField";
 import { withApollo } from "../utils/withApollo";
 import { REGISTER_MUTATION } from "../graphql/mutations/register";
@@ -29,12 +30,12 @@ function Register() {
           query: ME_QUERY,
           data: {
             __typename: "Query",
-            me: data?.register.team
-          }
-        })
-      }
-    })
-    if(response.data?.register.errors) {
+            me: data?.register.team,
+          },
+        });
+      },
+    });
+    if (response.data?.register.errors) {
       setErrors(toErrorMap(response.data.register.errors));
     } else if (response.data?.register.team) {
       router.push("/");
@@ -42,27 +43,29 @@ function Register() {
   };
 
   return (
-    <Box w="50%" h="50%">
-      <Formik
-        initialValues={initialValues}
-        onSubmit={async (values, { setErrors }) =>
-          await handleSubmit(values, setErrors)
-        }
-      >
-        {(props) => (
-          <Form>
-            <InputField name="name" label="Team Name" />
-            <InputField name="email" label="Captain Email" />
-            <InputField name="primaryColor" label="Primary Color" />
-            <InputField name="secondaryColor" label="Secondary Color" />
-            <InputField name="password" label="Password" type="password" />
-            <Button type="submit" isLoading={props.isSubmitting}>
-              Register
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    </Box>
+    <Layout>
+      <Box w="50%" h="50%">
+        <Formik
+          initialValues={initialValues}
+          onSubmit={async (values, { setErrors }) =>
+            await handleSubmit(values, setErrors)
+          }
+        >
+          {(props) => (
+            <Form>
+              <InputField name="name" label="Team Name" />
+              <InputField name="email" label="Captain Email" />
+              <InputField name="primaryColor" label="Primary Color" />
+              <InputField name="secondaryColor" label="Secondary Color" />
+              <InputField name="password" label="Password" type="password" />
+              <Button type="submit" isLoading={props.isSubmitting}>
+                Register
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </Box>
+    </Layout>
   );
 }
 

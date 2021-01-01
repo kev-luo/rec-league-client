@@ -7,7 +7,9 @@ export default function NavItems({ data, handleLogout, logoutLoading }) {
   return (
     <Box>
       <Stack
-        
+        direction="row"
+        align="center"
+        spacing={8}
       >
         {data?.me ? (
           <>

@@ -8,6 +8,8 @@ export default function NavbarContainer({children}) {
       w="100%"
       align="center"
       justify="space-between"
+      px={8}
+      py={5}
     >
       {children}
     </Flex>
