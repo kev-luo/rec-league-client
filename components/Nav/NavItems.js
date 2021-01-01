@@ -4,7 +4,7 @@ import { Box, Stack, Button } from "@chakra-ui/react";
 import NavItem from "./NavItem";
 
 export default function NavItems({ data, handleLogout, logoutLoading }) {
-  if(data) console.log(data)
+  
   return (
     <Box>
       <Stack
